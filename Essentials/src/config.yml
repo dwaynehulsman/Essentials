@@ -77,6 +77,9 @@ teleport-invulnerability: 4
 # Whether to make all teleportations go to the center of the block; where the x and z coordinates decimal become .5
 teleport-to-center: true
 
+# Only works with teleport-safety enabled and force-disable-teleport-safety enabled. If true, players will be warned if location is unsafe. If location becomes unsafe, the teleport is cancelled. This can be used to fight tp glitching.
+teleport-to-unsafe-location-check: true
+
 # The delay, in seconds, required between /heal or /feed attempts.
 heal-cooldown: 60
 

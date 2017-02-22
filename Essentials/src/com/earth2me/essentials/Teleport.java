@@ -19,6 +19,7 @@ import static com.earth2me.essentials.I18n.tl;
 public class Teleport implements net.ess3.api.ITeleport {
     private final IUser teleportOwner;
     private final IEssentials ess;
+
     private TimedTeleport timedTeleport;
 
     private TeleportType tpType;
@@ -203,8 +204,20 @@ public class Teleport implements net.ess3.api.ITeleport {
         }
 
         cancel(false);
+
         warnUser(teleportee, delay);
+
         initTimer((long) (delay * 1000.0), teleportee, target, cashCharge, cause, false);
+
+        if (ess.getSettings().isForceDisableTeleportSafety() && ess.getSettings().isTeleportToUnsafeLocationCheckEnabled()) {
+            if (LocationUtil.isBlockUnsafe(target.getLocation().getWorld(), target.getLocation().getBlockX(), target.getLocation().getBlockY(), target.getLocation().getBlockZ())) {
+                teleportee.sendMessage(tl("tpUnsafeLocation"));
+            } else {
+                if (target instanceof PlayerTarget) {
+                    TeleportSafety.monitorPlayer(((PlayerTarget) target).getBase(), teleportee.getBase(), this);
+                }
+            }
+        }
     }
 
     //The respawn function is a wrapper used to handle tp fallback, on /jail and /home
@@ -275,7 +288,7 @@ public class Teleport implements net.ess3.api.ITeleport {
     }
 
     //If we need to cancelTimer a pending teleportPlayer call this method
-    private void cancel(boolean notifyUser) {
+    public void cancel(boolean notifyUser) {
         if (timedTeleport != null) {
             timedTeleport.cancelTimer(notifyUser);
             timedTeleport = null;
@@ -284,5 +297,9 @@ public class Teleport implements net.ess3.api.ITeleport {
 
     private void initTimer(long delay, IUser teleportUser, ITarget target, Trade chargeFor, TeleportCause cause, boolean respawn) {
         timedTeleport = new TimedTeleport(teleportOwner, ess, this, delay, teleportUser, target, chargeFor, cause, respawn);
+    }
+
+    public TimedTeleport getTimedTeleport() {
+        return timedTeleport;
     }
 }

@@ -7,7 +7,6 @@ import com.earth2me.essentials.textreader.IText;
 import com.earth2me.essentials.textreader.SimpleTextInput;
 import com.earth2me.essentials.utils.FormatUtil;
 import com.earth2me.essentials.utils.NumberUtil;
-
 import net.ess3.api.IEssentials;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,16 +23,13 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.Locale.Category;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.earth2me.essentials.I18n.tl;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.google.common.base.Preconditions;
+import static com.earth2me.essentials.I18n.tl;
 
 
 public class Settings implements net.ess3.api.ISettings {
@@ -41,6 +37,7 @@ public class Settings implements net.ess3.api.ISettings {
     private static final Logger logger = Logger.getLogger("Essentials");
     private final transient IEssentials ess;
     private boolean metricsEnabled = true;
+    private boolean teleportToUnsafeLocationCheck = true;
 
     public Settings(IEssentials ess) {
         this.ess = ess;
@@ -551,6 +548,7 @@ public class Settings implements net.ess3.api.ISettings {
         npcsInBalanceRanking = _isNpcsInBalanceRanking();
         currencyFormat = _getCurrencyFormat();
         unprotectedSigns = _getUnprotectedSign();
+        teleportToUnsafeLocationCheck = _isTeleportToUnsafeLocationCheckEnabled();
     }
 
     private List<Integer> itemSpawnBl = new ArrayList<Integer>();
@@ -1408,5 +1406,14 @@ public class Settings implements net.ess3.api.ISettings {
     @Override
     public boolean isAddingSuffixInPlayerlist() {
         return config.getBoolean("add-suffix-in-playerlist", false);
+    }
+
+    @Override
+    public boolean isTeleportToUnsafeLocationCheckEnabled() {
+        return teleportToUnsafeLocationCheck;
+    }
+
+    public boolean _isTeleportToUnsafeLocationCheckEnabled() {
+        return config.getBoolean("teleport-to-unsafe-location-check");
     }
 }
